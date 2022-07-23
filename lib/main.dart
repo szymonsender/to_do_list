@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -36,8 +42,16 @@ class HomePage extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
       body: ListView(
-        children: [
-          ToDoWidget(),
+        children: const [
+          ToDoWidget(
+            'Zrobić pranie',
+          ),
+          ToDoWidget(
+            'Wynieść śmieci',
+          ),
+          ToDoWidget(
+            'Kupić pieprz',
+          ),
         ],
       ),
     );
@@ -45,9 +59,12 @@ class HomePage extends StatelessWidget {
 }
 
 class ToDoWidget extends StatelessWidget {
-  const ToDoWidget({
+  const ToDoWidget(
+    this.title, {
     Key? key,
   }) : super(key: key);
+
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +75,7 @@ class ToDoWidget extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(25),
       margin: const EdgeInsets.all(15),
-      child: const Text('Zrobić pranie'),
+      child: Text(title),
     );
   }
 }

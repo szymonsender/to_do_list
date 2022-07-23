@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "653075326534",
+    "project_id": "to-do-list-d882c",
+    "storage_bucket": "to-do-list-d882c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:653075326534:android:6a24704866abfab3fa8c47",
+        "android_client_info": {
+          "package_name": "com.szymonsender.to_do_list"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "653075326534-tkdk9ef78k7vtcokiiem4fbild15tvp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCVfLapOwffVfkJ7k6ABrECq7dDhLi5c0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "653075326534-tkdk9ef78k7vtcokiiem4fbild15tvp0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
