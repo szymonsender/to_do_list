@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -16,19 +17,22 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'To do list',
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: const HomePage(),
+      home: HomePage(),
     );
   }
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({
+  HomePage({
     Key? key,
   }) : super(key: key);
+
+  final controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +42,51 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          FirebaseFirestore.instance.collection('List').add(
+            {
+              'title': controller.text,
+            },
+          );
+          controller.clear();
+        },
         child: const Icon(Icons.add),
       ),
-      body: ListView(
-        children: const [
-          ToDoWidget(
-            'Zrobić pranie',
-          ),
-          ToDoWidget(
-            'Wynieść śmieci',
-          ),
-          ToDoWidget(
-            'Kupić pieprz',
-          ),
-        ],
-      ),
+      body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('List').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Wystąpił błąd');
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            }
+
+            final documents = snapshot.data!.docs;
+
+            return ListView(
+              children: [
+                for (final document in documents) ...[
+                  Dismissible(
+                    key: ValueKey(document.id),
+                    onDismissed: (_) {
+                      FirebaseFirestore.instance
+                          .collection('List')
+                          .doc(document.id)
+                          .delete();
+                    },
+                    child: ToDoWidget(
+                      document['title'],
+                    ),
+                  ),
+                ],
+                TextField(
+                  controller: controller,
+                ),
+              ],
+            );
+          }),
     );
   }
 }
