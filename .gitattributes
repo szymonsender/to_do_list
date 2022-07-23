@@ -1,2 +1,3 @@
-*.c++ linguist-detectable
-*.cmark linguist-detectable
+*.dart linguist-detectable=true
+*.c++ linguist-detectable=false
+*.cmark linguist-detectable=false
