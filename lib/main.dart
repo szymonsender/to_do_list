@@ -38,7 +38,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('To do list'),
+        title: const Text('Do zrobienia:'),
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
