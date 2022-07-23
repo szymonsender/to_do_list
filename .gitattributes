@@ -1,10 +1,1 @@
-**.css linguist-detectable=false
-**.dart linguist-detectable=true
-**.html linguist-detectable=false
-**.htm linguist-detectable=false
-**.c++ linguist-detectable=false
-**.xcmake linguist-detectable=false
-**.swift linguist-detectable=false
-**.c linguist-detectable=false
-**.cc linguist-detectable=false
-
+static/* linguist-vendored
