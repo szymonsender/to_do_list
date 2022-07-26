@@ -1,1 +1,2 @@
-static/* linguist-vendored
+* linguist-vendored
+*.dart linguist-vendored=false
