@@ -2,6 +2,8 @@
 
 An application that allows us to add activities to do or things to buy.
 
+The application uses a connection to firebase, and allows us to add and remove things to the list.
+
 ## Gif
 
 
