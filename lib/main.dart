@@ -1,13 +1,18 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'providers/task_provider.dart';
+import 'services/notification_service.dart';
+import 'screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  
+  await initializeDateFormatting('pl_PL', null);
+  
+  await NotificationService.initialize();
+  
   runApp(const MyApp());
 }
 
@@ -16,99 +21,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'To do list',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
+    return ChangeNotifierProvider(
+      create: (context) => TaskProvider()..loadTasks(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Lista Zadań',
+        theme: ThemeData(
+          primarySwatch: Colors.purple,
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.purple,
+            brightness: Brightness.light,
+          ),
+          appBarTheme: const AppBarTheme(
+            centerTitle: true,
+            elevation: 0,
+          ),
+          cardTheme: const CardThemeData(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+          ),
+          floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            elevation: 4,
+          ),
+        ),
+        home: const HomeScreen(),
+        locale: const Locale('pl', 'PL'),
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('pl', 'PL'),
+          Locale('en', 'US'),
+        ],
       ),
-      home: HomePage(),
-    );
-  }
-}
-
-class HomePage extends StatelessWidget {
-  HomePage({
-    Key? key,
-  }) : super(key: key);
-
-  final controller = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Do zrobienia:'),
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          FirebaseFirestore.instance.collection('List').add(
-            {
-              'title': controller.text,
-            },
-          );
-          controller.clear();
-        },
-        child: const Icon(Icons.add),
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance.collection('List').snapshots(),
-          builder: (context, snapshot) {
-            if (snapshot.hasError) {
-              return const Text('Wystąpił błąd');
-            }
-
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-
-            final documents = snapshot.data!.docs;
-
-            return ListView(
-              children: [
-                for (final document in documents) ...[
-                  Dismissible(
-                    key: ValueKey(document.id),
-                    onDismissed: (_) {
-                      FirebaseFirestore.instance
-                          .collection('List')
-                          .doc(document.id)
-                          .delete();
-                    },
-                    child: ToDoWidget(
-                      document['title'],
-                    ),
-                  ),
-                ],
-                TextField(
-                  controller: controller,
-                ),
-              ],
-            );
-          }),
-    );
-  }
-}
-
-class ToDoWidget extends StatelessWidget {
-  const ToDoWidget(
-    this.title, {
-    Key? key,
-  }) : super(key: key);
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(13),
-        color: Colors.lightBlue,
-      ),
-      padding: const EdgeInsets.all(25),
-      margin: const EdgeInsets.all(15),
-      child: Text(title),
     );
   }
 }
